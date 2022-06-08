@@ -2,11 +2,22 @@ from PyPDF2 import PdfFileMerger, PdfFileReader, PdfFileWriter
 import glob
 from pdfminer.high_level import extract_text
 import os 
+# import pandas as pd
 
 def main():
-  
+    separate_ballots = 'SeparateBallots'
+    if not os.path.exists(separate_ballots):
+        os.makedirs(separate_ballots)
+        print('Place ballots in SerparateBallots folder')
+        return 0
+    
+
+    sep = 'sep'
+    if not os.path.exists(sep):
+        os.makedirs(sep)
     
     pdf_files = glob.glob(f'SeparateBallots/*.pdf')
+    # df = pd.DataFrame(data={})
     
     count = 0
     for file in pdf_files:
@@ -27,7 +38,10 @@ def main():
             text = extract_text(f)
             if 'This page intentionally left blank' not in text:
                 merge.append(reader)
-        os.remove(f'{file}')
-    merge.write('Combined_Without_Blank.pdf')
+        os.remove(file)
+    os.removedirs(sep)
+    if os.path.exists('CombinedBallots_WoutBlank.pdf'):
+        os.remove('CombinedBallots_WoutBlank.pdf')
+    merge.write('CombinedBallots_WoutBlank.pdf')
 
 main()
